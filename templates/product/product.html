@@ -1,0 +1,82 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ product.title }}{% endblock title %}
+
+{% block content %}
+
+<div class="columns is-multiline">
+    <div class="column is-one-third">
+        {% if product.image %}
+            <figure class="image is-4by5">
+                <img src="{{ product.image.url }}" alt="{{ product.title }}" class="product-image" style="width: 100%; height: auto; max-height: 700px; border-radius: 8px;">
+            </figure>
+        {% endif %}
+    </div>
+
+    <div class="column is-two-thirds">
+        <h1 class="title is-3">{{ product.title }}</h1>
+        <h2 class="subtitle is-4 has-text-success">Rs {{ product.price }}</h2>
+        
+        <p class="mb-4">
+            <span class="tag is-info">{{ product.vendor.name }}</span>
+        </p>
+
+        <p class="content">{{ product.description }}</p>
+
+        <hr>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="notification is-success is-light">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" action="" class="mb-5">
+            {% csrf_token %}
+            <div class="field has-addons">
+                <div class="control">
+                    <input type="number" name="quantity" value="1" class="input" min="1">
+                </div>
+                <div class="control">
+                    <button class="button is-dark is-uppercase">Add to Cart</button>
+                </div>
+            </div>
+        </form>
+
+        {% if similar_products %}
+            <hr>
+            <div class="columns is-multiline">
+                <div class="column is-12">
+                    <h2 class="subtitle is-4">Similar Products</h2>
+                </div>
+
+                {% for product in similar_products %}
+                    <div class="column is-3 product-list-item">
+                        <div class="card">
+                            <div class="card-image">
+                                <figure class="image is-4by3">
+                                    <a href="{% url 'product:product' product.category.slug product.slug %}">
+                                        <img src="{{ product.get_thumbnail }}" alt="{{ product.title }}" class="product-image">
+                                    </a>
+                                </figure>
+                            </div>
+                            <div class="card-content">
+                                <div class="media">
+                                    <div class="media-content">
+                                        <p class="title is-5">{{ product.title }}</p>
+                                        <p class="subtitle is-6 has-text-danger">Rs {{ product.price }}</p>
+                                    </div>
+                                </div>
+                                <div class="content">
+                                    <a href="{% url 'product:product' product.category.slug product.slug %}" class="button is-dark is-small is-uppercase">View</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock content %}
